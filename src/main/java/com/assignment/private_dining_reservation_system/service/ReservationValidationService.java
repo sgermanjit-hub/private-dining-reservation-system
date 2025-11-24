@@ -26,6 +26,11 @@ public class ReservationValidationService {
 
     /**
      * Check if overlapping reservations exists
+     * This check kept at an application level so that we are not restricting ourselves to db
+     * Keeping logic in application will help us to move to any db in future
+     * Secondly, based on private dining which is definitely booking for little larger time, the number of rows per day per room will be less
+     * hence easy to keep the logic here
+     *
      *
      * @param room, reservationDate, startTime, endTime
      * @return boolean
