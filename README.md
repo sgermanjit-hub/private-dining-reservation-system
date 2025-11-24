@@ -38,16 +38,20 @@ Private Dining Reservation System is a spring boot Java application that helps t
 
 ## Start Docker Infrastructure
 From root of the project
+```bash
 - docker compose up -d 
+
 ## Verify Docker
 - docker ps (3 containers)
+```
 
 ## Running Application
+```
 - git clone git@github.com:sgermanjit-hub/private-dining-reservation-system.git
 - cd private-dining-reservation-system
 - mvn clean compile install
 - mvn spring-boot:run
-
+````
 ## Testing
 - Integration Tests
   - Test environment using Postgres containers
@@ -64,11 +68,10 @@ From root of the project
 
     
 ## Api Documentation
-http://localhost:8080/swagger-ui/index.html
+- http://localhost:8080/swagger-ui/index.html
 
 ## Design Docs
 - https://docs.google.com/document/d/1BMy3sYyWTxThd-kjxHmdJigjEX9KW-jfrcSlioZbPws/edit?tab=t.0
-
 
 ## ADR
 - Database Design https://docs.google.com/document/d/1mi8ZFily__Qj0MCOf1UbpyBFkrX8oYQt6adxGGlPyS8/edit?tab=t.0#heading=h.abgg4cyfohzo
