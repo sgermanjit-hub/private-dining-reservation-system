@@ -2,24 +2,24 @@
 Private Dining Reservation System is a spring boot Java application that helps to manage reservations of private rooms for a restaurant.
 
 ## Features
-# Restaurant Management
+### Restaurant Management
 - Create, Update and fetch restaurants
 - Create and manage rooms belongs to a restaurant with capacity and min spend
 
-# Room Management
+### Room Management
 - Reserve a specific room
 - Auto Assign Room based on RoomType and restaurant
 - Prevent Double bookings
 - Cancel Reservations
 
-# Availability Service
+### Availability Service
 - Fetch available rooms based on date and reservation time period
 - Defaulting to current remaining day for better user experience
 
-# Validations
-- Input validations 
+### Validations
+- Input validations for reservation and restaurant data 
 
-# Error Handling
+### Error Handling
 - Room not available
 - Reservation conflicts
 - Reservation failure
@@ -39,18 +39,21 @@ Private Dining Reservation System is a spring boot Java application that helps t
 ## Start Docker Infrastructure
 From root of the project
 ```bash
-- docker compose up -d 
+docker compose up -d 
 
 ## Verify Docker
-- docker ps (3 containers)
+docker ps (3 containers)
 ```
 
 ## Running Application
 ```
-- git clone git@github.com:sgermanjit-hub/private-dining-reservation-system.git
-- cd private-dining-reservation-system
-- mvn clean compile install
-- mvn spring-boot:run
+ git clone git@github.com:sgermanjit-hub/private-dining-reservation-system.git
+ 
+ cd private-dining-reservation-system
+ 
+ mvn clean compile install
+ 
+ mvn spring-boot:run
 ````
 ## Testing
 - Integration Tests
@@ -62,18 +65,21 @@ From root of the project
     - Prevents Double Booking
     - List Reservations by Diner and Restaurant
     - Cancellation of reservation
-    
-  - mvn test
+```    
+   mvn test
+```
 - Included double booking test 
 
     
 ## Api Documentation
-- http://localhost:8080/swagger-ui/index.html
+```bash
+Swagger UI
+👉 http://localhost:8080/swagger-ui/index.html
 
 ## Design Docs
-- https://docs.google.com/document/d/1BMy3sYyWTxThd-kjxHmdJigjEX9KW-jfrcSlioZbPws/edit?tab=t.0
+👉 https://docs.google.com/document/d/1BMy3sYyWTxThd-kjxHmdJigjEX9KW-jfrcSlioZbPws/edit?tab=t.0
 
 ## ADR
-- Database Design https://docs.google.com/document/d/1mi8ZFily__Qj0MCOf1UbpyBFkrX8oYQt6adxGGlPyS8/edit?tab=t.0#heading=h.abgg4cyfohzo
-- Concurrency Control https://docs.google.com/document/d/1UM7Ak0sB0-xx4DcMDOFvy_uV5YVM0GU3Vx2wiZ1FU7A/edit?tab=t.0#heading=h.pnn23mp761pq
+👉 Database Design https://docs.google.com/document/d/1mi8ZFily__Qj0MCOf1UbpyBFkrX8oYQt6adxGGlPyS8/edit?tab=t.0#heading=h.abgg4cyfohzo
+👉 Concurrency Control https://docs.google.com/document/d/1UM7Ak0sB0-xx4DcMDOFvy_uV5YVM0GU3Vx2wiZ1FU7A/edit?tab=t.0#heading=h.pnn23mp761pq
 
