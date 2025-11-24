@@ -1,0 +1,487 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+  - url: http://localhost:8080
+    description: Generated server url
+paths:
+  /api/restaurants/{id}:
+    get:
+      tags:
+        - restaurant-controller
+      operationId: getRestaurant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RestaurantResponse'
+    put:
+      tags:
+        - restaurant-controller
+      operationId: updateRestaurant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestaurantRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RestaurantResponse'
+  /api/restaurants/{id}/room/{roomId}:
+    put:
+      tags:
+        - restaurant-controller
+      operationId: updateRoom
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoomRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RoomResponse'
+  /api/restaurants:
+    post:
+      tags:
+        - restaurant-controller
+      operationId: createRestaurant
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestaurantRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RestaurantResponse'
+  /api/restaurants/{id}/room:
+    post:
+      tags:
+        - restaurant-controller
+      operationId: createRoom
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoomRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RoomResponse'
+  /api/reservations:
+    get:
+      tags:
+        - reservation-controller
+      operationId: listReservations
+      parameters:
+        - name: dinerEmail
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: restaurantId
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReservationResponse'
+    post:
+      tags:
+        - reservation-controller
+      operationId: createReservation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ReservationResponse'
+  /api/reservations/auto-assign:
+    post:
+      tags:
+        - reservation-controller
+      operationId: autoAssignCreateReservation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutoAssignReservationRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ReservationResponse'
+  /api/restaurants/{id}/rooms:
+    get:
+      tags:
+        - restaurant-controller
+      operationId: getRoomsForRestaurant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoomResponse'
+  /api/restaurant/{restaurantId}/available-rooms:
+    get:
+      tags:
+        - restaurant-availability-controller
+      operationId: availableRooms
+      parameters:
+        - name: restaurantId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: startTime
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 18:00
+          example: 18:00
+        - name: endTime
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 21:00
+          example: 21:00
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoomResponse'
+  /api/reservations/cancel/{id}:
+    delete:
+      tags:
+        - reservation-controller
+      operationId: cancelreservation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+components:
+  schemas:
+    RestaurantRequest:
+      required:
+        - address
+        - contact
+        - email
+        - localCurrencyCode
+        - restaurantName
+      type: object
+      properties:
+        restaurantName:
+          type: string
+          description: Name of the restaurant
+          example: Test ABC
+        address:
+          type: string
+          description: Address of the restaurant
+          example: "ABC Street, Hill Road"
+        contact:
+          type: string
+          description: Contact of the restaurant
+          example: +x1xxxxxxxxx
+        email:
+          type: string
+          description: Email of the restaurant
+          example: restaurant@gmail.com
+        localCurrencyCode:
+          type: string
+          description: Restaurant Local Currency
+          example: AUD
+          enum:
+            - AUD
+    RestaurantResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        address:
+          type: string
+        contact:
+          type: string
+        email:
+          type: string
+        localCurrencyCode:
+          type: string
+          enum:
+            - AUD
+    RoomRequest:
+      required:
+        - minSpendInCents
+        - roomName
+        - roomType
+      type: object
+      properties:
+        roomName:
+          type: string
+          description: Name of the Room
+          example: Test ABC
+        minCapacity:
+          maximum: 2147483647
+          minimum: 1
+          type: number
+          description: Min capacity for the room
+          example: 10
+        maxCapacity:
+          maximum: 2147483647
+          minimum: 1
+          type: number
+          description: Max capacity for the room
+          example: 10
+        roomType:
+          type: string
+          description: Room Type
+          example: ROOFTOP
+          enum:
+            - PRIVATE_ROOM
+            - HALL
+            - ROOFTOP
+        minSpendInCents:
+          type: number
+          description: min Spend for reservation in restaurant local currency
+          example: 10.0
+    RoomResponse:
+      type: object
+      properties:
+        roomId:
+          type: integer
+          format: int64
+        roomName:
+          type: string
+        minCapacity:
+          type: integer
+          format: int32
+        maxCapacity:
+          type: integer
+          format: int32
+        restaurantId:
+          type: integer
+          format: int64
+        roomType:
+          type: string
+          enum:
+            - ROOFTOP
+            - HALL
+            - PRIVATE_ROOM
+        minSpend:
+          type: number
+    ReservationRequest:
+      required:
+        - dinerEmail
+        - reservationDate
+        - reservationEndTime
+        - reservationStartTime
+        - restaurantId
+        - roomId
+      type: object
+      properties:
+        roomId:
+          type: number
+          description: Room unique id
+          example: 1
+        restaurantId:
+          type: number
+          description: Restaurant unique id
+          example: 1
+        reservationStartTime:
+          type: string
+          description: Reservation Start Time
+          example: 18:00
+        reservationEndTime:
+          type: string
+          description: Reservation End Time
+          example: 21:00
+        reservationDate:
+          type: string
+          description: Reservation Date
+          example: 2025-11-22
+        groupSize:
+          minimum: 1
+          type: number
+          description: Group Size for the reservation
+          example: 10
+        dinerEmail:
+          type: string
+          description: Guest's Email for the reservation
+          example: abc@diner.com
+    ReservationResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        restaurantId:
+          type: integer
+          format: int64
+        roomId:
+          type: integer
+          format: int64
+        reservationDate:
+          type: string
+          format: date
+        reservationStartTime:
+          type: string
+          example: 18:00
+        reservationEndTime:
+          type: string
+          example: 18:00
+        groupSize:
+          type: integer
+          format: int32
+        reservationStatus:
+          type: string
+          enum:
+            - CONFIRMED
+            - CANCELLED
+        dinerEmail:
+          type: string
+    AutoAssignReservationRequest:
+      required:
+        - dinerEmail
+        - reservationDate
+        - reservationEndTime
+        - reservationStartTime
+        - restaurantId
+        - roomType
+      type: object
+      properties:
+        restaurantId:
+          type: number
+          description: Restaurant unique id
+          example: 1
+        roomType:
+          type: string
+          description: Room Type
+          example: ROOFTOP
+          enum:
+            - PRIVATE_ROOM
+            - HALL
+            - ROOFTOP
+        reservationStartTime:
+          type: string
+          description: Reservation Start Time
+          example: 18:00
+        reservationEndTime:
+          type: string
+          description: Reservation End Time
+          example: 21:00
+        reservationDate:
+          type: string
+          description: Reservation Date
+          example: 2025-11-22
+        groupSize:
+          minimum: 1
+          type: number
+          description: Group Size for the reservation
+          example: 10
+        dinerEmail:
+          type: string
+          description: Guest's Email for the reservation
+          example: abc@diner.com

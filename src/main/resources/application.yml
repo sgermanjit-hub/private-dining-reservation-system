@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: private-dining-reservation-system
+  profiles:
+    active: dev
