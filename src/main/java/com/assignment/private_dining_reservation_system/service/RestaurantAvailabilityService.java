@@ -26,6 +26,7 @@ public class RestaurantAvailabilityService {
         }
         List<Room> rooms = roomService.getRoomsForRestaurant(restaurantId);
         return rooms.stream()
+                .filter(room -> reservationValidationService.validateRoomOperatingHours(room,reservationTimeFrame.date(), reservationTimeFrame.startTime(), reservationTimeFrame.endTime()))
                 .filter(room -> isRoomAvailableForSlot(room, reservationTimeFrame))
                 .toList();
     }

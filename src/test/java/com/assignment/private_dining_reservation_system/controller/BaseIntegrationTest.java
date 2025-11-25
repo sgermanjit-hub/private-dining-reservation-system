@@ -19,9 +19,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.EnumSet;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -54,7 +56,10 @@ public abstract class BaseIntegrationTest {
                 10,
                 20,
                 RoomType.ROOFTOP,
-                new BigDecimal("1000.00"));
+                new BigDecimal("1000.00"),
+                LocalTime.of(15,30),
+                LocalTime.of(23,30),
+                null);
     }
 
     Restaurant getRestaurant() {
@@ -109,7 +114,17 @@ public abstract class BaseIntegrationTest {
         room.setMaxCapacity(20);
         room.setRoomType(RoomType.ROOFTOP);
         room.setMinSpendInCents(new BigDecimal("1000.00"));
+        room.setRoomMetaData(getRoomMetaData(room));
         return room;
+    }
+
+    RoomMetaData getRoomMetaData(Room room){
+        RoomMetaData roomMetaData = new RoomMetaData();
+        roomMetaData.setRoomClosingTime(LocalTime.of(23,59));
+        roomMetaData.setRoomOpeningTime(LocalTime.of(00, 30));
+        roomMetaData.setOpenDays(EnumSet.allOf(DayOfWeek.class));
+        roomMetaData.setRoom(room);
+        return roomMetaData;
     }
 
     Room getSecondRoom() {
@@ -119,6 +134,7 @@ public abstract class BaseIntegrationTest {
         room.setMaxCapacity(20);
         room.setRoomType(RoomType.ROOFTOP);
         room.setMinSpendInCents(new BigDecimal("1000.00"));
+        room.setRoomMetaData(getRoomMetaData(room));
         return room;
     }
 

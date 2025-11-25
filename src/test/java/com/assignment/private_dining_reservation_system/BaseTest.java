@@ -9,8 +9,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.EnumSet;
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 public class BaseTest {
@@ -29,7 +32,7 @@ public class BaseTest {
     }
 
     protected RoomRequest getRoomRequest() {
-        return new RoomRequest("room", 10, 20, RoomType.ROOFTOP, new BigDecimal(500));
+        return new RoomRequest("room", 10, 20, RoomType.ROOFTOP, new BigDecimal(500),LocalTime.of(15,30),LocalTime.of(23,30), null);
     }
 
     protected Room getRoom() {
@@ -40,7 +43,17 @@ public class BaseTest {
         room.setMinCapacity(10);
         room.setMaxCapacity(15);
         room.setRoomName("room");
+        room.setRoomMetaData(getRoomMetaData(room));
         return room;
+    }
+
+    protected RoomMetaData getRoomMetaData(Room room){
+        RoomMetaData roomMetaData = new RoomMetaData();
+        roomMetaData.setRoomClosingTime(LocalTime.of(23,30));
+        roomMetaData.setRoomOpeningTime(LocalTime.of(15, 30));
+        roomMetaData.setOpenDays(EnumSet.allOf(DayOfWeek.class));
+        roomMetaData.setRoom(room);
+        return roomMetaData;
     }
 
     protected ReservationRequest getReservationRequest() {
@@ -58,8 +71,8 @@ public class BaseTest {
         reservation.setRoom(getRoom());
         reservation.setReservationDate(LocalDate.now().plusDays(2));
         reservation.setDinerEmail("diner@gmail.com");
-        reservation.setReservationStartTime(LocalTime.now());
-        reservation.setReservationEndTime(LocalTime.now().plusHours(4));
+        reservation.setReservationStartTime(LocalTime.of(15,30));
+        reservation.setReservationEndTime(reservation.getReservationStartTime().plusHours(4));
         reservation.setRestaurant(getRestaurant());
         reservation.setGroupSize(10);
         return reservation;

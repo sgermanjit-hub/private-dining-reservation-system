@@ -53,6 +53,7 @@ class ReservationServiceTest extends BaseTest {
         when(restaurantService.getById(anyLong())).thenReturn(restaurant);
         doNothing().when(reservationEventProducer).sendReservationEvent(any(Reservation.class));
         when(reservationValidationService.checkOverlap(any(Room.class), any(LocalDate.class), any(LocalTime.class), any(LocalTime.class))).thenReturn(false);
+        when(reservationValidationService.validateRoomOperatingHours(any(Room.class), any(LocalDate.class), any(LocalTime.class), any(LocalTime.class))).thenReturn(true);
         when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation);
         when(roomCalendarService.lockRoomCalendarForReservationDate(any(Room.class), any(LocalDate.class))).thenReturn(roomCalendar);
         Reservation reservationResult = reservationService.createReservation(reservationRequest);
@@ -83,6 +84,7 @@ class ReservationServiceTest extends BaseTest {
         when(roomService.getByIdAndRestaurantId(anyLong(), anyLong())).thenReturn(room);
         when(restaurantService.getById(anyLong())).thenReturn(restaurant);
         when(reservationValidationService.checkOverlap(any(Room.class), any(LocalDate.class), any(LocalTime.class), any(LocalTime.class))).thenReturn(true);
+        when(reservationValidationService.validateRoomOperatingHours(any(Room.class), any(LocalDate.class), any(LocalTime.class), any(LocalTime.class))).thenReturn(true);
         when(roomCalendarService.lockRoomCalendarForReservationDate(any(Room.class), any(LocalDate.class))).thenReturn(roomCalendar);
         assertThrows(RoomNotAvailableException.class, () -> reservationService.createReservation(reservationRequest));
         verify(roomService, times(1)).getByIdAndRestaurantId(anyLong(), anyLong());
@@ -105,6 +107,7 @@ class ReservationServiceTest extends BaseTest {
         when(restaurantService.getById(anyLong())).thenReturn(restaurant);
         doNothing().when(reservationEventProducer).sendReservationEvent(any(Reservation.class));
         when(reservationValidationService.checkOverlap(any(Room.class), any(LocalDate.class), any(LocalTime.class), any(LocalTime.class))).thenReturn(false);
+        when(reservationValidationService.validateRoomOperatingHours(any(Room.class), any(LocalDate.class), any(LocalTime.class), any(LocalTime.class))).thenReturn(true);
         when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation);
         when(roomCalendarService.lockRoomCalendarForReservationDate(any(Room.class), any(LocalDate.class))).thenReturn(roomCalendar);
         Reservation reservationResult = reservationService.autoAssignCreateReservation(autoAssignReservationRequest);

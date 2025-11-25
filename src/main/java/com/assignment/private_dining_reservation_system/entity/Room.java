@@ -1,19 +1,6 @@
 package com.assignment.private_dining_reservation_system.entity;
 
-import jakarta.persistence.Id;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Column;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Index;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -38,6 +25,9 @@ public class Room {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
+
+    @OneToOne(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private RoomMetaData roomMetaData;
 
     @Column(name = "min_capacity", nullable = false)
     private int minCapacity;

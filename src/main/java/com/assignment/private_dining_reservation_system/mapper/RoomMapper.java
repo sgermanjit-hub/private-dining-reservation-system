@@ -15,7 +15,10 @@ public class RoomMapper {
                 room.getMaxCapacity(),
                 room.getRestaurant().getId(),
                 room.getRoomType(),
-                room.getMinSpendInCents()
+                room.getMinSpendInCents(),
+                room.getRoomMetaData().getRoomOpeningTime(),
+                room.getRoomMetaData().getRoomClosingTime(),
+                room.getRoomMetaData().getOpenDays()
         );
     }
 }

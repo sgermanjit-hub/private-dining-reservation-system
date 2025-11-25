@@ -47,15 +47,20 @@ public class ReservationService {
         Room room = roomService.getByIdAndRestaurantId(reservationRequest.roomId(), reservationRequest.restaurantId());
         //2. Fetch Restaurant Details
         Restaurant restaurant = restaurantService.getById(reservationRequest.restaurantId());
-        //3. Validate Date and Time For Reservation
+        //3. Validate Reservation is within room operating hours
+        boolean validOperatingHours = reservationValidationService.validateRoomOperatingHours(room, reservationRequest.reservationDate(), reservationRequest.reservationStartTime(), reservationRequest.reservationEndTime());
+        if(!validOperatingHours){
+            throw new RoomNotAvailableException("Reservation is not within operating hours");
+        }
+        //4. Validate Date and Time For Reservation
         //   # Reservation Date >= today
         //   # Reservation end time > reservation start time
         reservationValidationService.validateDateAndTime(reservationRequest);
-        //4. Validate Room Capacity for Group
+        //5. Validate Room Capacity for Group
         reservationValidationService.validateRoomCapacity(room, reservationRequest.groupSize());
-        //5. Core Reservation Logic
+        //6. Core Reservation Logic
         Reservation reservation = createRoomReservation(restaurant, room, reservationRequest);
-        //6. Emit Notification for reservation created
+        //7. Emit Notification for reservation created
         reservationEventProducer.sendReservationEvent(reservation);
         return reservation;
     }
@@ -97,13 +102,17 @@ public class ReservationService {
                 autoAssignReservationRequest.groupSize(),
                 autoAssignReservationRequest.dinerEmail()
         );
-
-        //5. Validate Date and Time For Reservation
+        //5. Validate Reservation is within room operating hours
+        boolean validOperatingHours = reservationValidationService.validateRoomOperatingHours(selectedRoom, reservationRequest.reservationDate(), reservationRequest.reservationStartTime(), reservationRequest.reservationEndTime());
+        if(!validOperatingHours){
+            throw new RoomNotAvailableException("Reservation is not within operating hours");
+        }
+        //6. Validate Date and Time For Reservation
         //   # Reservation Date >= today
         //   # Reservation end time > reservation start time
         reservationValidationService.validateDateAndTime(reservationRequest);
 
-        //6. Core Reservation Logic
+        //7. Core Reservation Logic
         Reservation reservation = createRoomReservation(restaurant, selectedRoom, reservationRequest);
         //7. Emit Notification for reservation created
         reservationEventProducer.sendReservationEvent(reservation);

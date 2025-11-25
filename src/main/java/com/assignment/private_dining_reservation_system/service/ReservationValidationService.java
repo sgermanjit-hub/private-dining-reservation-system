@@ -4,18 +4,20 @@ import com.assignment.private_dining_reservation_system.constants.Constants;
 import com.assignment.private_dining_reservation_system.entity.Reservation;
 import com.assignment.private_dining_reservation_system.entity.ReservationStatus;
 import com.assignment.private_dining_reservation_system.entity.Room;
+import com.assignment.private_dining_reservation_system.entity.RoomMetaData;
 import com.assignment.private_dining_reservation_system.exception.ReservationValidationFailureException;
+import com.assignment.private_dining_reservation_system.exception.RoomNotAvailableException;
 import com.assignment.private_dining_reservation_system.model.request.ReservationRequest;
 import com.assignment.private_dining_reservation_system.repository.ReservationRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.List;
 /**
  * Central place for all reservation validations
  * */
+@Slf4j
 @Service
 public class ReservationValidationService {
     private final ReservationRepository reservationRepository;
@@ -82,20 +84,27 @@ public class ReservationValidationService {
      */
     public void validateDateAndTime(ReservationRequest reservationRequest) {
         LocalDate today = LocalDate.now();
-        LocalTime reservationStartTime = reservationRequest.reservationStartTime();
-        LocalTime reservationEndTime = reservationRequest.reservationEndTime();
-        if (reservationEndTime.isBefore(reservationStartTime)) {
-            throw new ReservationValidationFailureException("Start Time cannot be earlier than end Time");
-        }
-        if (reservationEndTime.isBefore(reservationStartTime.plusHours(Constants.minBookingHours))) {
-            throw new ReservationValidationFailureException("Min Booking for Private Dining is for 3 hours");
-        }
         LocalDate reservationDate = reservationRequest.reservationDate();
-        if (reservationDate == null || reservationDate.isBefore(today) || reservationDate.isAfter(today.plusDays(Constants.advanceBookingDays))) {
+        LocalTime start = reservationRequest.reservationStartTime();
+        LocalTime end = reservationRequest.reservationEndTime();
+
+        LocalDateTime reservationStartTime = reservationDate.atTime(start);
+        LocalDateTime reservationEndTime = getFinalEndDateTime(reservationDate, start, end);
+
+        if (reservationDate.isBefore(today) || reservationDate.isAfter(today.plusDays(Constants.advanceBookingDays))) {
             throw new ReservationValidationFailureException("Reservation date should be greater than today and less than 30 days in advance.");
         }
-        if (reservationDate.isEqual(today) && !reservationStartTime.isAfter(LocalTime.now())) {
+
+        if (reservationDate.isEqual(today) && !reservationStartTime.isAfter(LocalDateTime.now())) {
             throw new ReservationValidationFailureException("Reservation Start Time should be greater than current for current day bookings.");
+        }
+        if (!reservationEndTime.isAfter(reservationStartTime)) {
+            throw new ReservationValidationFailureException("Start Time cannot be earlier than end Time");
+        }
+
+        long hours = Duration.between(reservationStartTime, reservationEndTime).toHours();
+        if (hours < Constants.minBookingHours) {
+            throw new ReservationValidationFailureException("Min Booking for Private Dining is for 3 hours");
         }
     }
 
@@ -107,6 +116,44 @@ public class ReservationValidationService {
         if (groupSize > room.getMaxCapacity() || groupSize < room.getMinCapacity()) {
             throw new ReservationValidationFailureException("Room is not suitable for your group");
         }
+    }
+
+    /**
+     * Validate whether reservation is within the opening closing time
+     * */
+    public boolean validateRoomOperatingHours(Room room, LocalDate reservationDate, LocalTime startTime, LocalTime endTime) {
+        RoomMetaData roomMetaData = room.getRoomMetaData();
+        if(roomMetaData == null){
+            log.debug("Room is not available");
+            return false;
+        }
+        //Check room is operating on that day of week
+        if(null != roomMetaData.getOpenDays() && !roomMetaData.getOpenDays().isEmpty()){
+            DayOfWeek dayOfWeek = reservationDate.getDayOfWeek();
+            if(!roomMetaData.getOpenDays().contains(dayOfWeek)){
+                log.debug("Room is not available on the request day");
+                return false;
+            }
+        }
+        LocalDateTime reservationStartTime = reservationDate.atTime(startTime);
+        LocalDateTime reservationEndTime = getFinalEndDateTime(reservationDate, startTime, endTime);
+
+        LocalDateTime openReservationTime = reservationDate.atTime(roomMetaData.getRoomOpeningTime());
+        LocalDateTime closeReservationEndTime = getFinalEndDateTime(reservationDate, roomMetaData.getRoomOpeningTime(), roomMetaData.getRoomClosingTime());
+
+
+        //check room is operating at request start time
+        if(reservationStartTime.isBefore(openReservationTime)){
+            log.debug("Room opens at: " + roomMetaData.getRoomOpeningTime());
+            return false;
+        }
+
+        //
+        if(reservationEndTime.isAfter(closeReservationEndTime)){
+            log.debug("Room closes at: " + roomMetaData.getRoomClosingTime());
+            return false;
+        }
+        return true;
     }
 
     public List<Reservation> getReservationsByRoomReservationDateAndStatus(Room room, LocalDate reservationDate) {

@@ -32,7 +32,7 @@ class ReservationValidationServiceTest extends BaseTest {
         Reservation reservation = getReservation();
         List<Reservation> reservationList = List.of(reservation);
         when(reservationRepository.findByRoomReservationDateAndStatus(any(Room.class), any(LocalDate.class), eq(ReservationStatus.CONFIRMED))).thenReturn(reservationList);
-        boolean result = reservationValidationService.checkOverlap(room, LocalDate.now().plusDays(2), LocalTime.now(), LocalTime.now().plusHours(3));
+        boolean result = reservationValidationService.checkOverlap(room, LocalDate.now().plusDays(2), LocalTime.of(14,30), LocalTime.of(14,30).plusHours(3));
         assertTrue(result);
         verify(reservationRepository, times(1)).findByRoomReservationDateAndStatus(any(Room.class), any(LocalDate.class), eq(ReservationStatus.CONFIRMED));
     }

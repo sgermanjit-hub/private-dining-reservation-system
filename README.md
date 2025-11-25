@@ -4,10 +4,11 @@ Private Dining Reservation System is a spring boot Java application that helps t
 ## Features
 ### Restaurant Management
 - Create, Update and fetch restaurants
-- Create and manage rooms belongs to a restaurant with capacity and min spend
+- Create and manage rooms belongs to a restaurant with capacity, Min Spend, Opening Days and hours
 
 ### Room Management
 - Reserve a specific room
+- Validating Operating Hours
 - Auto Assign Room based on RoomType and restaurant
 - Prevent Double bookings
 - Cancel Reservations
@@ -18,6 +19,7 @@ Private Dining Reservation System is a spring boot Java application that helps t
 
 ### Validations
 - Input validations for reservation and restaurant data 
+- Operational Hours Validation
 
 ### Error Handling
 - Room not available
