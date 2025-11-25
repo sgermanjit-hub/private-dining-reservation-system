@@ -6,7 +6,6 @@ import com.assignment.private_dining_reservation_system.entity.ReservationStatus
 import com.assignment.private_dining_reservation_system.entity.Room;
 import com.assignment.private_dining_reservation_system.entity.RoomMetaData;
 import com.assignment.private_dining_reservation_system.exception.ReservationValidationFailureException;
-import com.assignment.private_dining_reservation_system.exception.RoomNotAvailableException;
 import com.assignment.private_dining_reservation_system.model.request.ReservationRequest;
 import com.assignment.private_dining_reservation_system.repository.ReservationRepository;
 import lombok.extern.slf4j.Slf4j;

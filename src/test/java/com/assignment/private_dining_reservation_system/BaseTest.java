@@ -13,7 +13,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.EnumSet;
-import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 public class BaseTest {
